@@ -1,4 +1,4 @@
-# Technical Summative 1: Python Programs
+# Technical Summative 1
 ---
 ### 1. **Character Counter**  
    - **Description**: Counts vowels, consonants, spaces, and other characters in an input string.  
