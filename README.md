@@ -1,11 +1,5 @@
 # Technical Summative 1: Python Programs
-
-This repository contains three Python programs developed as part of Technical Summative 1. Each program addresses a specific problem using loops and basic operations.
-
 ---
-
-## 📂 Programs
-
 ### 1. **Character Counter**  
    - **Description**: Counts vowels, consonants, spaces, and other characters in an input string.  
    - **Usage**: Run the script, input a string, and view the results.  
@@ -48,3 +42,25 @@ This repository contains three Python programs developed as part of Technical Su
        666666
        7777777
        ```
+---
+# Activity 1: Condition 
+---
+
+## Features
+
+- **Part 1**: Finds the highest number using nested conditional statements.  
+- **Part 2**: Sorts the three numbers in descending order using logical comparisons (no built-in sorting functions).  
+
+---
+
+## Example Output
+
+```
+Enter first number: 10
+Enter second number: 3
+Enter third number: 7
+
+The highest number is 10.0
+
+Numbers in descending order: 10.0 7.0 3.0
+```
