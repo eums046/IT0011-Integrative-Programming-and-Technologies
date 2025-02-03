@@ -64,3 +64,29 @@ The highest number is 10.0
 
 Numbers in descending order: 10.0 7.0 3.0
 ```
+---
+# Activity 2: Looping
+---
+
+## Programs
+
+### 1. Sum of Numbers from First Term to Last Term
+This program calculates the sum of numbers from a starting term to an ending term provided by the user.
+
+**Example Output:**
+```
+Enter first term number: 10
+Enter last term number: 15
+The sum of the numbers from 10 to 15 is 75
+```
+
+---
+
+### 2. Prime Number Checker
+This program checks if a given number is a prime number using a loop.
+**Example Output:**
+```
+Enter a number: 7
+7 is a prime number.
+```
+
