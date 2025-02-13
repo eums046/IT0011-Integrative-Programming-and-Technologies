@@ -91,8 +91,8 @@ Enter a number: 7
 ```
 
 
-## Overview
-This repository contains solutions for the IT0011 (Integrative Programming and Technologies) technical midterm examination. The assignment focuses on two main programming challenges:
+## Technical Midterm Examination
+The Examination focuses on two main programming challenges:
 1. Palindrome Sum Checker
 2. Date Format Converter
 
