@@ -90,3 +90,30 @@ Enter a number: 7
 7 is a prime number.
 ```
 
+
+## Overview
+This repository contains solutions for the IT0011 (Integrative Programming and Technologies) technical midterm examination. The assignment focuses on two main programming challenges:
+1. Palindrome Sum Checker
+2. Date Format Converter
+
+## Problem Descriptions
+
+### 1. Palindrome Sum Checker
+This program reads numbers from a file and determines if their sum forms a palindrome.
+
+#### Requirements
+- Input: File named `numbers.txt` containing comma-separated numbers on each line
+- Output: For each line, indicate whether the sum is a palindrome
+
+<img width="721" alt="Screenshot 2025-02-13 at 7 34 48 PM" src="https://github.com/user-attachments/assets/ea766b6c-1b64-44ba-ac63-d124a87cd34e" />
+
+### 2. Date Format Converter
+This program converts dates from MM/DD/YYYY format to a more readable format.
+
+#### Requirements
+- Input: Date string in MM/DD/YYYY format
+- Output: Date in "Month Day, Year" format
+
+<img width="682" alt="Screenshot 2025-02-13 at 7 35 43 PM" src="https://github.com/user-attachments/assets/0142f250-afdf-4451-9a0c-76a405f17014" />
+
+
