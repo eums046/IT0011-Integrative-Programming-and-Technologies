@@ -1,0 +1,301 @@
+import os
+import pickle
+
+class StudentRecordManager:
+    def __init__(self):
+        self.records = []
+        self.current_file = None
+    
+    def validate_student_id(self, student_id):
+        """Validate student ID is a 6-digit number."""
+        if not isinstance(student_id, str):
+            student_id = str(student_id)
+        return student_id.isdigit() and len(student_id) == 6
+    
+    def calculate_grade(self, class_standing, major_exam):
+        """Calculate final grade (60% class standing, 40% major exam)."""
+        return (class_standing * 0.6) + (major_exam * 0.4)
+    
+    def open_file(self):
+        """Open a file with student records."""
+        filename = input("Enter filename to open: ")
+        try:
+            with open(filename, 'rb') as file:
+                self.records = pickle.load(file)
+                self.current_file = filename
+                print(f"Successfully opened {filename} with {len(self.records)} records.")
+        except FileNotFoundError:
+            print(f"File {filename} not found.")
+        except Exception as e:
+            print(f"Error opening file: {e}")
+    
+    def save_file(self):
+        """Save to current file if exists, otherwise prompt for a new filename."""
+        if not self.current_file:
+            self.save_as_file()
+        else:
+            try:
+                with open(self.current_file, 'wb') as file:
+                    pickle.dump(self.records, file)
+                print(f"Successfully saved to {self.current_file}.")
+            except Exception as e:
+                print(f"Error saving file: {e}")
+    
+    def save_as_file(self):
+        """Save to a new file."""
+        filename = input("Enter filename to save as: ")
+        try:
+            with open(filename, 'wb') as file:
+                pickle.dump(self.records, file)
+                self.current_file = filename
+                print(f"Successfully saved to {filename}.")
+        except Exception as e:
+            print(f"Error saving file: {e}")
+    
+    def show_all_students(self):
+        """Show all student records with sorting options."""
+        if not self.records:
+            print("No records to display.")
+            return
+        
+        print("\nSort by:")
+        print("1. Last Name")
+        print("2. Grade")
+        choice = input("Enter your choice (1-2): ")
+        
+        if choice == '1':
+            # Sort by last name
+            sorted_records = sorted(self.records, key=lambda x: x[1][1])  # x[1][1] is the last name
+            self._display_records(sorted_records)
+        elif choice == '2':
+            # Sort by grade (calculated)
+            sorted_records = sorted(self.records, 
+                                   key=lambda x: self.calculate_grade(x[2], x[3]), 
+                                   reverse=True)
+            self._display_records(sorted_records, show_grade=True)
+        else:
+            print("Invalid choice.")
+    
+    def _display_records(self, records, show_grade=False):
+        """Helper function to display formatted records."""
+        print("\n{:<10} {:<25} {:<15} {:<15} {:<10}".format(
+            "ID", "Name", "Class Standing", "Major Exam", "Final Grade" if show_grade else ""))
+        print("-" * 75)
+        
+        for record in records:
+            student_id, name, class_standing, major_exam = record
+            first_name, last_name = name
+            full_name = f"{first_name} {last_name}"
+            
+            if show_grade:
+                final_grade = self.calculate_grade(class_standing, major_exam)
+                print("{:<10} {:<25} {:<15.2f} {:<15.2f} {:<10.2f}".format(
+                    student_id, full_name, class_standing, major_exam, final_grade))
+            else:
+                print("{:<10} {:<25} {:<15.2f} {:<15.2f}".format(
+                    student_id, full_name, class_standing, major_exam))
+    
+    def show_student_record(self):
+        """Display a specific student record by ID."""
+        if not self.records:
+            print("No records available.")
+            return
+        
+        student_id = input("Enter student ID to search: ")
+        found = False
+        
+        for record in self.records:
+            if record[0] == student_id:
+                found = True
+                student_id, name, class_standing, major_exam = record
+                first_name, last_name = name
+                final_grade = self.calculate_grade(class_standing, major_exam)
+                
+                print("\nStudent Record:")
+                print(f"ID: {student_id}")
+                print(f"Name: {first_name} {last_name}")
+                print(f"Class Standing: {class_standing:.2f}")
+                print(f"Major Exam: {major_exam:.2f}")
+                print(f"Final Grade: {final_grade:.2f}")
+                break
+        
+        if not found:
+            print(f"No student found with ID {student_id}.")
+    
+    def add_record(self):
+        """Add a new student record."""
+        # Get student ID
+        while True:
+            student_id = input("Enter 6-digit student ID: ")
+            if self.validate_student_id(student_id):
+                # Check if ID already exists
+                if any(record[0] == student_id for record in self.records):
+                    print("Error: Student ID already exists.")
+                else:
+                    break
+            else:
+                print("Error: Student ID must be a 6-digit number.")
+        
+        # Get student name
+        first_name = input("Enter first name: ")
+        last_name = input("Enter last name: ")
+        
+        # Get grades with validation
+        while True:
+            try:
+                class_standing = float(input("Enter class standing (0-100): "))
+                if 0 <= class_standing <= 100:
+                    break
+                else:
+                    print("Error: Class standing must be between 0 and 100.")
+            except ValueError:
+                print("Error: Please enter a valid number.")
+        
+        while True:
+            try:
+                major_exam = float(input("Enter major exam grade (0-100): "))
+                if 0 <= major_exam <= 100:
+                    break
+                else:
+                    print("Error: Major exam grade must be between 0 and 100.")
+            except ValueError:
+                print("Error: Please enter a valid number.")
+        
+        # Create and add the new record
+        new_record = (student_id, (first_name, last_name), class_standing, major_exam)
+        self.records.append(new_record)
+        print("Record added successfully.")
+    
+    def edit_record(self):
+        """Edit an existing student record."""
+        if not self.records:
+            print("No records available to edit.")
+            return
+        
+        student_id = input("Enter student ID to edit: ")
+        found = False
+        
+        for i, record in enumerate(self.records):
+            if record[0] == student_id:
+                found = True
+                print(f"Editing record for student {record[1][0]} {record[1][1]}.")
+                
+                # Get updated information
+                print("Leave field empty to keep current value.")
+                
+                # Name
+                first_name = input(f"Enter new first name [{record[1][0]}]: ")
+                if not first_name:
+                    first_name = record[1][0]
+                
+                last_name = input(f"Enter new last name [{record[1][1]}]: ")
+                if not last_name:
+                    last_name = record[1][1]
+                
+                # Grades
+                while True:
+                    class_input = input(f"Enter new class standing [{record[2]}]: ")
+                    if not class_input:
+                        class_standing = record[2]
+                        break
+                    try:
+                        class_standing = float(class_input)
+                        if 0 <= class_standing <= 100:
+                            break
+                        else:
+                            print("Error: Class standing must be between 0 and 100.")
+                    except ValueError:
+                        print("Error: Please enter a valid number.")
+                
+                while True:
+                    exam_input = input(f"Enter new major exam grade [{record[3]}]: ")
+                    if not exam_input:
+                        major_exam = record[3]
+                        break
+                    try:
+                        major_exam = float(exam_input)
+                        if 0 <= major_exam <= 100:
+                            break
+                        else:
+                            print("Error: Major exam grade must be between 0 and 100.")
+                    except ValueError:
+                        print("Error: Please enter a valid number.")
+                
+                # Update the record
+                self.records[i] = (student_id, (first_name, last_name), class_standing, major_exam)
+                print("Record updated successfully.")
+                break
+        
+        if not found:
+            print(f"No student found with ID {student_id}.")
+    
+    def delete_record(self):
+        """Delete a student record."""
+        if not self.records:
+            print("No records available to delete.")
+            return
+        
+        student_id = input("Enter student ID to delete: ")
+        found = False
+        
+        for i, record in enumerate(self.records):
+            if record[0] == student_id:
+                found = True
+                print(f"Found student: {record[1][0]} {record[1][1]}")
+                confirm = input("Are you sure you want to delete this record? (y/n): ")
+                
+                if confirm.lower() == 'y':
+                    del self.records[i]
+                    print("Record deleted successfully.")
+                else:
+                    print("Deletion cancelled.")
+                break
+        
+        if not found:
+            print(f"No student found with ID {student_id}.")
+
+def display_menu():
+    """Display the main menu options."""
+    print("\n===== STUDENT RECORD MANAGEMENT =====")
+    print("1. Open File")
+    print("2. Save File")
+    print("3. Save As File")
+    print("4. Show All Students Record")
+    print("5. Show Student Record")
+    print("6. Add Record")
+    print("7. Edit Record")
+    print("8. Delete Record")
+    print("9. Exit")
+    return input("Enter your choice (1-9): ")
+
+def main():
+    """Main program function."""
+    manager = StudentRecordManager()
+    
+    while True:
+        choice = display_menu()
+        
+        if choice == '1':
+            manager.open_file()
+        elif choice == '2':
+            manager.save_file()
+        elif choice == '3':
+            manager.save_as_file()
+        elif choice == '4':
+            manager.show_all_students()
+        elif choice == '5':
+            manager.show_student_record()
+        elif choice == '6':
+            manager.add_record()
+        elif choice == '7':
+            manager.edit_record()
+        elif choice == '8':
+            manager.delete_record()
+        elif choice == '9':
+            print("Exiting program. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
